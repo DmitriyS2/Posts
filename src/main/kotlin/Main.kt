@@ -85,7 +85,7 @@ object WallService {
 }
 
 fun main(args: Array<String>) {
-    var p1 = PostSource(null)
+    //var p1 = PostSource(null)
     var post1 = Post(comments = Comments(), likes = Likes(0),
         reposts = null, views = null, postSource = null, geo = null)
     println(post1)
