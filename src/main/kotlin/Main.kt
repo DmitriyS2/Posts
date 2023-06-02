@@ -27,6 +27,7 @@ data class Post(
     var attachments: Array<Attachment> = emptyArray()
 )
 
+
 data class Comments(
     val count: Int = 0,
     val canPost: Boolean = true,
@@ -61,12 +62,12 @@ data class Geo(
     val place: String = "place"
 )
 
-abstract class Attachment(val type: String)
-class PhotoAttachment(type: String = "photo", val photo: Photo) : Attachment("photo")
-class GraffitiAttachment(type: String = "graffiti", val graffiti: Graffiti) : Attachment("graffiti")
-class AppAttachment(type: String = "app", val app: App) : Attachment("app")
-class PageAttachment(type: String = "page", val page: Page) : Attachment("page")
-class EventAttachment(type: String = "event", val page: Page) : Attachment("event")
+sealed class Attachment(val type: String)
+class PhotoAttachment(val photo: Photo) : Attachment("photo")
+class GraffitiAttachment(val graffiti: Graffiti) : Attachment("graffiti")
+class AppAttachment(val app: App) : Attachment("app")
+class PageAttachment(val page: Page) : Attachment("page")
+class EventAttachment(val event: Event) : Attachment("event")
 
 data class Photo(
     val id: Int = 0,
@@ -138,7 +139,7 @@ object WallService {
 }
 
 fun main(args: Array<String>) {
-    var pS1 = PostSource(null)
+    val pS1 = PostSource(null)
     var post1 = Post(
         comments = Comments(), likes = Likes(0),
         reposts = null, views = null, postSource = pS1, geo = null
@@ -147,7 +148,7 @@ fun main(args: Array<String>) {
     post1 = WallService.add(post1)
     println(post1)
     println(WallService.posts[0])
-    val attachmentPhoto: Attachment = PhotoAttachment("photo", photo = Photo())
+    val attachmentPhoto: Attachment = PhotoAttachment (photo = Photo(photo130 = "photo130", photo604 = "photo604"))
     WallService.addAttachment(post1, attachmentPhoto)
     println(post1)
     println("\n")
