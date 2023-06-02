@@ -1,29 +1,30 @@
 data class Post(
     val id: Int = 0,
     val ownerId: Int = 0,
-    val fromId:Int = 0,
-    val createdBy:Int = 0,
-    val date:Int =0,
+    val fromId: Int = 0,
+    val createdBy: Int = 0,
+    val date: Int = 0,
     val text: String = "text",
-    val replyOwnerId:Int = 0,
-    val replyPostId:Int =0,
-    val friendsOnly:Boolean = true,
+    val replyOwnerId: Int = 0,
+    val replyPostId: Int = 0,
+    val friendsOnly: Boolean = true,
     val comments: Comments,
     val copyright: String = "",
-    val likes:Likes,
-    val reposts:Reposts?,
-    val views:Views?,
+    val likes: Likes,
+    val reposts: Reposts?,
+    val views: Views?,
     val postType: String = "postType",
-    val postSource:PostSource?,
-    val geo:Geo?,
+    val postSource: PostSource?,
+    val geo: Geo?,
     val signerId: Int = 0,
     val canPin: Boolean = true,
     val canDelete: Boolean = true,
     val canEdit: Boolean = true,
-    val isPinned:Boolean = true,
-    val markedAsAds:Boolean = true,
-    val isFavorite:Boolean = true,
-    val postponedId:Int = 0
+    val isPinned: Boolean = true,
+    val markedAsAds: Boolean = true,
+    val isFavorite: Boolean = true,
+    val postponedId: Int = 0,
+    var attachments: Array<Attachment> = emptyArray()
 )
 
 data class Comments(
@@ -40,21 +41,67 @@ data class Likes(
     val canLike: Boolean = true,
     val canPublish: Boolean = true
 )
+
 data class Reposts(
-    val count:Int=0,
-    val userReposted:Boolean = true
+    val count: Int = 0,
+    val userReposted: Boolean = true
 )
+
 data class Views(
-    val count:Int?
+    val count: Int?
 )
+
 data class PostSource(
-    val id:Int?
+    val id: Int?
 )
+
 data class Geo(
-    val type:String = "type",
-    val coordinates:String = "coordinates",
-    val place:String = "place"
+    val type: String = "type",
+    val coordinates: String = "coordinates",
+    val place: String = "place"
 )
+
+abstract class Attachment(val type: String)
+class PhotoAttachment(type: String = "photo", val photo: Photo) : Attachment("photo")
+class GraffitiAttachment(type: String = "graffiti", val graffiti: Graffiti) : Attachment("graffiti")
+class AppAttachment(type: String = "app", val app: App) : Attachment("app")
+class PageAttachment(type: String = "page", val page: Page) : Attachment("page")
+class EventAttachment(type: String = "event", val page: Page) : Attachment("event")
+
+data class Photo(
+    val id: Int = 0,
+    val idOwner: Int = 0,
+    val photo130: String? = null,
+    val photo604: String? = null
+)
+
+data class Graffiti(
+    val id: Int = 0,
+    val idOwner: Int = 0,
+    val photo130: String? = null,
+    val photo604: String? = null
+)
+
+data class App(
+    val id: Int = 0,
+    val idOwner: Int = 0,
+    val photo130: String? = null,
+    val photo604: String? = null
+)
+
+data class Page(
+    val id: Int = 0,
+    val groupId: Int = 0,
+    val title: String = "title"
+)
+
+data class Event(
+    val id: Int = 0,
+    val time: Int = 0,
+    val memberStatus: Int = 0,
+    val text: String = "text"
+)
+
 
 private var uniqueId: Int = 1
 
@@ -82,19 +129,33 @@ object WallService {
         posts = emptyArray()
         uniqueId = 1
     }
+
+    fun addAttachment(post: Post, attachment: Attachment): Post {
+        post.attachments += attachment
+        update(post)
+        return post
+    }
 }
 
 fun main(args: Array<String>) {
-    //var p1 = PostSource(null)
-    var post1 = Post(comments = Comments(), likes = Likes(0),
-        reposts = null, views = null, postSource = null, geo = null)
+    var pS1 = PostSource(null)
+    var post1 = Post(
+        comments = Comments(), likes = Likes(0),
+        reposts = null, views = null, postSource = pS1, geo = null
+    )
     println(post1)
     post1 = WallService.add(post1)
     println(post1)
     println(WallService.posts[0])
+    val attachmentPhoto: Attachment = PhotoAttachment("photo", photo = Photo())
+    WallService.addAttachment(post1, attachmentPhoto)
+    println(post1)
     println("\n")
-    var post2 = Post(comments = Comments(), likes = Likes(5),
-        reposts = null, views = null, postSource = null, geo = null)
+
+    var post2 = Post(
+        comments = Comments(), likes = Likes(5),
+        reposts = null, views = null, postSource = null, geo = null
+    )
     println(post2)
     post2 = WallService.add(post2)
     println(post2)
