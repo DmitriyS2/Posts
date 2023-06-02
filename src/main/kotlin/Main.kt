@@ -1,14 +1,29 @@
 data class Post(
     val id: Int = 0,
     val ownerId: Int = 0,
+    val fromId:Int = 0,
+    val createdBy:Int = 0,
+    val date:Int =0,
     val text: String = "text",
+    val replyOwnerId:Int = 0,
+    val replyPostId:Int =0,
+    val friendsOnly:Boolean = true,
     val comments: Comments,
+    val copyright: String = "",
+    val likes:Likes,
+    val reposts:Reposts?,
+    val views:Views?,
     val postType: String = "postType",
+    val postSource:PostSource?,
+    val geo:Geo?,
     val signerId: Int = 0,
     val canPin: Boolean = true,
     val canDelete: Boolean = true,
     val canEdit: Boolean = true,
-    val copyright: Copyright
+    val isPinned:Boolean = true,
+    val markedAsAds:Boolean = true,
+    val isFavorite:Boolean = true,
+    val postponedId:Int = 0
 )
 
 data class Comments(
@@ -19,11 +34,26 @@ data class Comments(
     val canOpen: Boolean = true
 )
 
-data class Copyright(
-    val id: Int,
-    val link: String = "link",
-    val name: String = "name",
-    val type: String = "type"
+data class Likes(
+    val count: Int,
+    val userLikes: Boolean = true,
+    val canLike: Boolean = true,
+    val canPublish: Boolean = true
+)
+data class Reposts(
+    val count:Int=0,
+    val userReposted:Boolean = true
+)
+data class Views(
+    val count:Int?
+)
+data class PostSource(
+    val id:Int?
+)
+data class Geo(
+    val type:String = "type",
+    val coordinates:String = "coordinates",
+    val place:String = "place"
 )
 
 private var uniqueId: Int = 1
@@ -55,15 +85,18 @@ object WallService {
 }
 
 fun main(args: Array<String>) {
-//    var post1 = Post(comments = Comments(), copyright = Copyright(1))
-//    println(post1)
-//    post1 = WallService.add(post1)
-//    println(post1)
-//    println(WallService.posts[0])
-//    println("\n")
-//    var post2 = Post(comments = Comments(), copyright = Copyright(2))
-//    println(post2)
-//    post2 = WallService.add(post2)
-//    println(post2)
-//    println(WallService.posts[1])
+    var p1 = PostSource(null)
+    var post1 = Post(comments = Comments(), likes = Likes(0),
+        reposts = null, views = null, postSource = null, geo = null)
+    println(post1)
+    post1 = WallService.add(post1)
+    println(post1)
+    println(WallService.posts[0])
+    println("\n")
+    var post2 = Post(comments = Comments(), likes = Likes(5),
+        reposts = null, views = null, postSource = null, geo = null)
+    println(post2)
+    post2 = WallService.add(post2)
+    println(post2)
+    println(WallService.posts[1])
 }
