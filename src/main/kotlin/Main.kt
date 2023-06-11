@@ -183,5 +183,5 @@ fun main(args: Array<String>) {
     println(WallService.posts[1])
 
     println("\n"+WallService.createComment(1, comment = Comment()))
-    println(WallService.createComment(5, comment = Comment()))
+    //println(WallService.createComment(5, comment = Comment()))
 }
