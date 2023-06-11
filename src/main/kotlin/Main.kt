@@ -1,3 +1,5 @@
+import java.lang.RuntimeException
+
 data class Post(
     val id: Int = 0,
     val ownerId: Int = 0,
@@ -8,7 +10,7 @@ data class Post(
     val replyOwnerId: Int = 0,
     val replyPostId: Int = 0,
     val friendsOnly: Boolean = true,
-    val comments: Comments,
+    val comment: Comment,
     val copyright: String = "",
     val likes: Likes,
     val reposts: Reposts?,
@@ -28,12 +30,12 @@ data class Post(
 )
 
 
-data class Comments(
+data class Comment(
     val count: Int = 0,
-    val canPost: Boolean = true,
-    val groupCanPost: Boolean = true,
-    val canClose: Boolean = true,
-    val canOpen: Boolean = true
+    val fromId:Int = 0,
+    val date:Int = 0,
+    val text:String = "text",
+    val replyToUser:Int = 0
 )
 
 data class Likes(
@@ -106,8 +108,11 @@ data class Event(
 
 private var uniqueId: Int = 1
 
+class PostNotFoundException(message:String):RuntimeException(message)
+
 object WallService {
     var posts = emptyArray<Post>()
+    var comments = emptyArray<Comment>()
 
     fun add(post: Post): Post {
         val postUniqueId = post.copy(id = uniqueId)
@@ -136,12 +141,27 @@ object WallService {
         update(post)
         return post
     }
+
+    fun createComment(postId: Int, comment: Comment): Comment {
+        if (checkId(postId)) {
+            comments +=comment
+            return comment
+        } else throw PostNotFoundException("Нет поста с Id = $postId")
+    }
+    fun checkId(postId:Int):Boolean {
+        for(post:Post in posts) {
+            if (post.id==postId) {
+                return true
+            }
+        }
+        return false
+    }
 }
 
 fun main(args: Array<String>) {
     val pS1 = PostSource(null)
     var post1 = Post(
-        comments = Comments(), likes = Likes(0),
+        comment = Comment(), likes = Likes(0),
         reposts = null, views = null, postSource = pS1, geo = null
     )
     println(post1)
@@ -154,11 +174,14 @@ fun main(args: Array<String>) {
     println("\n")
 
     var post2 = Post(
-        comments = Comments(), likes = Likes(5),
+        comment = Comment(), likes = Likes(5),
         reposts = null, views = null, postSource = null, geo = null
     )
     println(post2)
     post2 = WallService.add(post2)
     println(post2)
     println(WallService.posts[1])
+
+    println("\n"+WallService.createComment(1, comment = Comment()))
+    println(WallService.createComment(5, comment = Comment()))
 }

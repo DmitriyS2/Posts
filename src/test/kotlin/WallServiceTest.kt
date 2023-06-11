@@ -11,7 +11,7 @@ class WallServiceTest {
 
     @Test
     fun addPost() {
-        val post1 = Post(comments = Comments(), likes = Likes(0),
+        val post1 = Post(comment = Comment(), likes = Likes(0),
             reposts = null, views = null, postSource = null, geo = null)
         val (result) = WallService.add(post1)
         assertEquals(1, result)
@@ -19,9 +19,9 @@ class WallServiceTest {
 
     @Test
     fun updateTrueId() {
-        val post1 = Post(comments = Comments(), likes = Likes(0),
+        val post1 = Post(comment = Comment(), likes = Likes(0),
             reposts = null, views = null, postSource = null, geo = null)
-        val post2 = Post(id = 1, comments = Comments(), likes = Likes(0),
+        val post2 = Post(id = 1, comment = Comment(), likes = Likes(0),
             reposts = null, views = null, postSource = null, geo = null)
         WallService.add(post1)
         val result: Boolean = WallService.update(post2)
@@ -30,9 +30,9 @@ class WallServiceTest {
 
     @Test
     fun updateFalseId() {
-        val post1 = Post(comments = Comments(), likes = Likes(0),
+        val post1 = Post(comment = Comment(), likes = Likes(0),
             reposts = null, views = null, postSource = null, geo = null)
-        val post2 = Post(id = 3, comments = Comments(), likes = Likes(0),
+        val post2 = Post(id = 3, comment = Comment(), likes = Likes(0),
             reposts = null, views = null, postSource = null, geo = null)
         WallService.add(post1)
         val result: Boolean = WallService.update(post2)
