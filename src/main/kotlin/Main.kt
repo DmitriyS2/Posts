@@ -32,10 +32,10 @@ data class Post(
 
 data class Comment(
     val count: Int = 0,
-    val fromId:Int = 0,
-    val date:Int = 0,
-    val text:String = "text",
-    val replyToUser:Int = 0
+    val fromId: Int = 0,
+    val date: Int = 0,
+    val text: String = "text",
+    val replyToUser: Int = 0
 )
 
 data class Likes(
@@ -105,10 +105,19 @@ data class Event(
     val text: String = "text"
 )
 
+data class NegativeComments(
+    val postId: Int = 0,
+    val reason: String = "text"
+)
 
 private var uniqueId: Int = 1
+val reasons: Array<String> = arrayOf(
+    "спам", "детская порнография", "экстремизм", "насилие",
+    "пропаганда наркотиков", "материал для взрослых", "оскорбление", "призывы к суициду"
+)
+var reportsNegativeComments: Array<NegativeComments> = emptyArray()
 
-class PostNotFoundException(message:String):RuntimeException(message)
+class PostNotFoundException(message: String) : RuntimeException(message)
 
 object WallService {
     var posts = emptyArray<Post>()
@@ -144,15 +153,28 @@ object WallService {
 
     fun createComment(postId: Int, comment: Comment): Comment {
         if (checkId(postId)) {
-            comments +=comment
+            comments += comment
             return comment
         } else throw PostNotFoundException("Нет поста с Id = $postId")
     }
-    fun checkId(postId:Int):Boolean {
-        for(post:Post in posts) {
-            if (post.id==postId) {
+
+    fun checkId(postId: Int): Boolean {
+        for (post: Post in posts) {
+            if (post.id == postId) {
                 return true
             }
+        }
+        return false
+    }
+
+    fun checkNegativeComments(postId: Int, reason: Int): Boolean {
+        try {
+            if (checkId(postId)) {
+                reportsNegativeComments += NegativeComments(postId, reasons[reason])
+                return true
+            } else throw PostNotFoundException("Нет поста с Id = $postId")
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            println("Вы ввели неверный номер причины ($reason - не входит в интервал от 0 до 7 включительно)")
         }
         return false
     }
@@ -168,7 +190,7 @@ fun main(args: Array<String>) {
     post1 = WallService.add(post1)
     println(post1)
     println(WallService.posts[0])
-    val attachmentPhoto: Attachment = PhotoAttachment (photo = Photo(photo130 = "photo130", photo604 = "photo604"))
+    val attachmentPhoto: Attachment = PhotoAttachment(photo = Photo(photo130 = "photo130", photo604 = "photo604"))
     WallService.addAttachment(post1, attachmentPhoto)
     println(post1)
     println("\n")
@@ -182,6 +204,9 @@ fun main(args: Array<String>) {
     println(post2)
     println(WallService.posts[1])
 
-    println("\n"+WallService.createComment(1, comment = Comment()))
+    println("\n" + WallService.createComment(1, comment = Comment()))
     //println(WallService.createComment(5, comment = Comment()))
+
+    if (WallService.checkNegativeComments(1, 5)) println(reportsNegativeComments[0])
+
 }
